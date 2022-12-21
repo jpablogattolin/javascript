@@ -1,35 +1,27 @@
-//Primera Preentrega JAVASCRIPT
-//SIMULADOR DE COMPRA
+// SIMULADOR INTERACTIVO 1ra PRE ENTREGA
 
-//INICIALIZACION DE VARIABLES
-
-const procesoDeCompra = () => {
-    let producto = "";
+const comprarProductos = () => {
+    let producto = '';
     let cantidad = 0;
     let precio = 0;
-    let totalCompra =0;
+    let totalCompra = 0;
     let seguirComprando = false;
-}
 
-    nombre = prompt ("INGRESE SU NOMBRE:");
-    apellido = prompt ("INGRESE SU APELLIDO");
-    alert ("BIENVENIDO" +" " + nombre + " " +apellido);
+    do {
+        producto = prompt ("¿Querés comprar detergente, cloro o ambos?", "Ej: ambos");
+        cantidad = parseInt(prompt ("¿Cuántos querés comprar?"));
 
-do {
-    producto = prompt("Ingrese que desea comprar: DETERGENTE, CLORO o DESODORANTE");
-    cantidad = parseInt (prompt ("Ingrese cantidad:"))
-
-     
+        let cantidadValidada = validarCantidad(cantidad);
 
     switch (producto) {
         case "detergente":
-            precio = 300;
-            break;
-        case "cloro":
             precio = 500;
             break;
-        case "desodorante":
-            precio = 300;
+        case " cloro":
+            precio = 700;
+            break;
+        case "ambos":
+            precio = 1100;
             break;
         default:
             alert("Alguno de los datos ingresados no es correcto");
@@ -37,19 +29,18 @@ do {
             cantidad= 0;
     }
 
-    let validacion = cantidadValida(cantidad);
+    totalCompra += precio * cantidadValidada;
+    seguirComprando = confirm("¿Querés agregar otro producto?");
 
-    totalCompra = precio * validacion;
-    seguirComprando = confirm("Queres seguir comprando");
+    } while (seguirComprando)
 
+    const totalConDescuento = aplicarDescuento(totalCompra);
+    const totalConEnvio = calcularEnvio(totalConDescuento);
 
-} while (seguirComprando);
+    return totalConEnvio;
+}
 
-
-
-
-
-const cantidadValida = (cantidad) => {
+const validarCantidad = (cantidad) => {
     while (Number.isNaN(cantidad) || cantidad === 0) {
         if (cantidad !== 0) {
             alert('Deber agregar un número.')
@@ -61,3 +52,82 @@ const cantidadValida = (cantidad) => {
 
     return cantidad;
 };
+
+const aplicarDescuento = (totalCompra) => {
+    let totalConDescuento = 0;
+
+    if (totalCompra >= 5000) {
+        totalConDescuento = totalCompra * 0.80;
+        return totalConDescuento;
+    } else {
+        return totalCompra;
+    }
+}
+
+const calcularEnvio = (totalCompra) => {
+    let tieneEnvioADomicilio = false;
+
+    tieneEnvioADomicilio = confirm("¿Querés envío a domicilio?");
+
+    if (tieneEnvioADomicilio && totalCompra >= 2000) {
+      alert("Tenés envio gratis. El total de tu compra es $" + totalCompra);
+    } else if (tieneEnvioADomicilio && totalCompra < 2000 && totalCompra !== 0) {
+      totalCompra += 700;
+      alert("El envío cuesta $700. El total de tu compra es $" + totalCompra);
+    } else {
+      alert("El total de tu compra es $" + totalCompra);
+    }
+
+    return totalCompra;
+}
+
+function calcularCantidadDeCuotas() {
+    let cuotas = 0;
+    let tieneCuotas = false;
+
+    tieneCuotas = confirm("¿Querés pagar en cuotas?");
+
+    if(tieneCuotas) {
+        cuotas = parseInt(prompt("¿En cuántas cuotas querés pagar?"));
+        if (cuotas === 0){
+            cuotas = 1;
+        }else if (Number.isNaN(cuotas)){
+            calcularCantidadDeCuotas();
+        }
+    }else {
+        cuotas = 1;
+    }
+
+    return cuotas;
+};
+
+function calcularIntereses (cuotas) {
+    let tasa = 12.3;
+    let sinIntereses = 0;
+    let tasaTotal = 0;
+    let interesesTotales = 0;
+
+    if (cuotas === 1){
+        return sinIntereses;
+    }else{
+        tasaTotal = tasa + cuotas * 0.2;
+        interesesTotales = tasaTotal * cuotas;
+        return interesesTotales;
+    }
+}
+
+function calcularTotalAPagar (totalCompra, cuotas, intereses) {
+    totalCompra = (totalCompra + intereses)
+    let valorCuota = totalCompra / cuotas;
+    alert ("El total a pagar es $"+totalCompra+" en "+cuotas+" cuotas de $"+valorCuota.toFixed(2));
+}
+
+
+const totalCompra = comprarProductos();
+
+const cuotas = calcularCantidadDeCuotas();
+
+const intereses = calcularIntereses(cuotas);
+
+
+calcularTotalAPagar(totalCompra, cuotas, intereses);
